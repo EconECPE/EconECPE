@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "econecpe/annotation/v0.3",
+  "title": "EconECPE ECPE annotation output",
+  "description": "Output schema for emotion-cause pair extraction on a single r/economics comment. One object per comment. A comment with no economically-caused emotion gets pairs: []. Authoritative prose rules live in annotation_spec.md (same version).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pairs"],
+  "properties": {
+    "pairs": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "emotion",
+          "emotion_span",
+          "cause_span",
+          "cause_source",
+          "cause_category",
+          "target_asset",
+          "intensity",
+          "sarcasm"
+        ],
+        "properties": {
+          "emotion": {
+            "description": "Finance-affect label. 'neutral' is not a pair emotion: neutral comments emit no pairs.",
+            "enum": [
+              "fear_anxiety",
+              "pessimism_despair",
+              "anger_disgust",
+              "optimism_confidence",
+              "excitement_euphoria",
+              "confusion_uncertainty",
+              "surprise"
+            ]
+          },
+          "emotion_span": {
+            "description": "Verbatim substring of the COMMENT expressing the emotion (minimal but complete).",
+            "type": "string",
+            "minLength": 1
+          },
+          "cause_span": {
+            "description": "Verbatim substring of the comment or its context (post title/selftext, parent comment) stating the cause. null iff no cause is identifiable (then cause_category must be 'unclear').",
+            "type": ["string", "null"],
+            "minLength": 1
+          },
+          "cause_source": {
+            "description": "Where cause_span was copied from. null iff cause_span is null.",
+            "enum": ["comment", "post", "parent", null]
+          },
+          "cause_category": {
+            "description": "Fixed cause taxonomy. 'interpersonal' = affect at other users/mods/the sub, not an economic condition (captured, filtered out of market aggregation downstream); 'other' = identifiable economic cause outside the taxonomy; 'unclear' = no identifiable cause (cause_span null).",
+            "enum": [
+              "inflation",
+              "monetary_policy",
+              "employment",
+              "growth_gdp",
+              "fiscal_taxes",
+              "trade_tariffs",
+              "energy",
+              "housing",
+              "geopolitics",
+              "markets_themselves",
+              "crypto",
+              "corporate_earnings",
+              "inequality_distribution",
+              "personal_finance",
+              "interpersonal",
+              "other",
+              "unclear"
+            ]
+          },
+          "target_asset": {
+            "description": "Asset class the emotion is about, if any.",
+            "enum": ["equities", "bonds", "gold", "crypto", "USD", "housing", "none"]
+          },
+          "intensity": {
+            "description": "Anchored: 0.25 mild, 0.5 moderate, 0.75 strong, 1.0 extreme (intermediate values allowed).",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "sarcasm": {
+            "description": "true if the emotion is conveyed through sarcasm/irony (label the INTENDED emotion).",
+            "type": "boolean"
+          }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "cause_span": { "const": null } } },
+            "then": {
+              "properties": {
+                "cause_category": { "const": "unclear" },
+                "cause_source": { "const": null }
+              }
+            },
+            "else": {
+              "properties": {
+                "cause_category": { "not": { "const": "unclear" } },
+                "cause_source": { "enum": ["comment", "post", "parent"] }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

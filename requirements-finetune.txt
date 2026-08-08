@@ -1,0 +1,29 @@
+# Phase 3 distillation (pipeline/finetune.py) — local GPU fine-tuning.
+# Separate from requirements.txt: heavy CUDA deps, not needed for
+# scraping/annotation. Install inside the same venv:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu128
+#   pip install -r requirements-finetune.txt
+#   pip install ninja flash-linear-attention
+#   CAUSAL_CONV1D_FORCE_BUILD=TRUE pip install --no-build-isolation --no-cache-dir \
+#       "git+https://github.com/Dao-AILab/causal-conv1d.git"
+#
+# RTX 5090 (Blackwell, sm_120) needs a recent torch/bitsandbytes/unsloth —
+# install torch from the cu128 index first (line above), THEN this file, so
+# pip doesn't pull a stale CPU/older-CUDA torch as a transitive dependency.
+#
+# The last two lines (causal-conv1d + flash-linear-attention) are REQUIRED for
+# Qwen3.5's fast Gated-DeltaNet (Mamba-style) kernel path — without them,
+# training silently falls back to a slow pure-torch implementation (~2x
+# slower, ~14% more VRAM; measured 2026-07-04 on this setup). `--no-build-
+# isolation` is the load-bearing flag: causal-conv1d's build pulls its own
+# fresh `torch` into an isolated build env otherwise, which lands on a
+# different CUDA tag than the system nvcc (12.8) and fails PyTorch's
+# consistency check. `pip install causal-conv1d` (plain, isolated) WILL fail
+# on this setup — always use the git+--no-build-isolation form above.
+unsloth
+unsloth_zoo
+trl>=0.12
+peft>=0.13
+bitsandbytes>=0.44
+accelerate>=1.0
+datasets>=3.0

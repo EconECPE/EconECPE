@@ -1,0 +1,33 @@
+{
+  "emotions": [
+    "fear_anxiety",
+    "pessimism_despair",
+    "anger_disgust",
+    "optimism_confidence",
+    "excitement_euphoria",
+    "confusion_uncertainty",
+    "surprise"
+  ],
+  "causeCategories": [
+    "inflation",
+    "monetary_policy",
+    "employment",
+    "growth_gdp",
+    "fiscal_taxes",
+    "trade_tariffs",
+    "energy",
+    "housing",
+    "geopolitics",
+    "markets_themselves",
+    "crypto",
+    "corporate_earnings",
+    "inequality_distribution",
+    "personal_finance",
+    "interpersonal",
+    "other",
+    "unclear"
+  ],
+  "targetAssets": ["equities", "bonds", "gold", "crypto", "USD", "housing", "none"],
+  "intensityAnchors": [0.25, 0.5, 0.75, 1.0],
+  "annotators": ["A", "B"]
+}

@@ -1,0 +1,19 @@
+# --- Corpus ingest + rehydration (arctic_shift.py, tools/rehydrate.py) ---
+# Both talk only to the public Arctic Shift archive API, with a fixed delay
+# between requests and an identifying user-agent. Nothing here scrapes
+# reddit.com, evades a rate limit, or authenticates as a user.
+requests>=2.31
+tqdm>=4.66
+
+# --- Validation ---
+jsonschema
+
+# --- LLM annotation (pipeline/llm.py) ---
+# No provider is assumed. pipeline/llm.py is a self-contained client over any
+# OpenAI-compatible chat endpoint; set LLM_BASE_URL and LLM_API_KEY. Only needed
+# to re-run annotation: the released labels and the whole market analysis
+# reproduce without it, and every calling module has an offline --mock path.
+openai>=1.40
+
+# --- Analysis / plotting ---
+matplotlib>=3.8

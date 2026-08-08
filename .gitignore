@@ -1,0 +1,49 @@
+__pycache__/
+*.py[cod]
+venv/
+venv-vllm/
+.env
+node_modules/
+*.log
+*.pid
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Training and labelling outputs: adapters, checkpoints, corpus-scale label runs.
+outputs/
+*.pt
+*.safetensors
+
+# ---------------------------------------------------------------------------
+# data/ is DENY BY DEFAULT.
+#
+# This repository ships identifiers, offsets and aggregates — never Reddit text
+# and never a username. But the pipeline regenerates text-bearing files right
+# next to the released ones: `<model>.labels.jsonl` and `consensus.jsonl` carry
+# spans as literal text (the released files are the `.offsets.jsonl` twins),
+# `adjudication_worklist.md` and the debate transcripts quote whole comments,
+# and arctic_shift.py writes the raw archive — bodies *and* authors — into
+# data/ directly. Any of those committed by accident would republish the corpus.
+#
+# So: ignore everything under data/, then allow back exactly what is released.
+# Add a new released file here deliberately, or it will not be tracked.
+# ---------------------------------------------------------------------------
+data/*
+!data/manifest/
+!data/labels/
+!data/market/
+
+data/manifest/*
+!data/manifest/*.manifest.jsonl
+
+data/labels/*
+!data/labels/gold/
+!data/labels/silver/
+data/labels/gold/*
+!data/labels/gold/*.offsets.jsonl
+data/labels/silver/*
+!data/labels/silver/*.offsets.jsonl
+
+data/market/*
+!data/market/*.csv

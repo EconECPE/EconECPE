@@ -1,0 +1,84 @@
+[
+  {
+    "note": "E1: two pairs, causes in comment",
+    "input": {
+      "post_title": "Fed signals two more hikes this year",
+      "post_selftext": null,
+      "parent_body": null,
+      "comment": "I'm honestly terrified. The Fed keeps hiking into a slowdown — and my landlord just raised rent 15% anyway."
+    },
+    "output": {
+      "pairs": [
+        {"emotion": "fear_anxiety", "emotion_span": "I'm honestly terrified",
+         "cause_span": "The Fed keeps hiking into a slowdown", "cause_source": "comment",
+         "cause_category": "monetary_policy", "target_asset": "none",
+         "intensity": 0.75, "sarcasm": false},
+        {"emotion": "anger_disgust", "emotion_span": "my landlord just raised rent 15% anyway",
+         "cause_span": "raised rent 15%", "cause_source": "comment",
+         "cause_category": "housing", "target_asset": "housing",
+         "intensity": 0.5, "sarcasm": false}
+      ]
+    }
+  },
+  {
+    "note": "E2: cause in the post title, low-arousal negative",
+    "input": {
+      "post_title": "US already in recession, Fed will cut rates back to zero — analyst",
+      "post_selftext": null,
+      "parent_body": null,
+      "comment": "Damn. I mean, we all saw it coming, but that is sobering."
+    },
+    "output": {
+      "pairs": [
+        {"emotion": "pessimism_despair", "emotion_span": "that is sobering",
+         "cause_span": "US already in recession", "cause_source": "post",
+         "cause_category": "growth_gdp", "target_asset": "none",
+         "intensity": 0.5, "sarcasm": false}
+      ]
+    }
+  },
+  {
+    "note": "E3: sarcasm",
+    "input": {
+      "post_title": "Congress passes new spending bill",
+      "post_selftext": null,
+      "parent_body": null,
+      "comment": "Oh fantastic, another trillion on the deficit. I'm sure our grandkids will thank us."
+    },
+    "output": {
+      "pairs": [
+        {"emotion": "anger_disgust", "emotion_span": "Oh fantastic, another trillion on the deficit",
+         "cause_span": "another trillion on the deficit", "cause_source": "comment",
+         "cause_category": "fiscal_taxes", "target_asset": "none",
+         "intensity": 0.75, "sarcasm": true}
+      ]
+    }
+  },
+  {
+    "note": "E4: neutral analytical comment",
+    "input": {
+      "post_title": "New tax proposal targets top earners",
+      "post_selftext": null,
+      "parent_body": null,
+      "comment": "Many people that make 425k+ probably hide a lot of it anyways. So they never hit that 20% point."
+    },
+    "output": {"pairs": []}
+  },
+  {
+    "note": "E5: interpersonal affect at the parent commenter",
+    "input": {
+      "post_title": "Student loan forgiveness debate continues",
+      "post_selftext": null,
+      "parent_body": "It just needs a reboot, wipe everything clean. It's going to be a positive for everyone except the loan providers.",
+      "comment": "So your whole reason against it is because it's 'not fair'. Did you even read the article?"
+    },
+    "output": {
+      "pairs": [
+        {"emotion": "anger_disgust", "emotion_span": "Did you even read the article?",
+         "cause_span": "your whole reason against it is because it's 'not fair'",
+         "cause_source": "comment", "cause_category": "interpersonal",
+         "target_asset": "none", "intensity": 0.5, "sarcasm": false}
+      ]
+    }
+  }
+]
