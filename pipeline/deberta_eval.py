@@ -122,7 +122,11 @@ def forward_all(checkpoint, sample_items, model_name, max_len):
     dev = "cuda" if torch.cuda.is_available() else "cpu"
     tok = AutoTokenizer.from_pretrained(model_name)
     model = build_model(model_name).to(dev)
-    model.load_state_dict(torch.load(checkpoint, map_location=dev))
+    if str(checkpoint).endswith(".safetensors"):  # the Hugging Face release format
+        from safetensors.torch import load_file
+        model.load_state_dict(load_file(checkpoint, device=str(dev)))
+    else:
+        model.load_state_dict(torch.load(checkpoint, map_location=dev))
     model.eval()
 
     cached = []

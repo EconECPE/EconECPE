@@ -47,3 +47,5 @@ data/labels/silver/*
 
 data/market/*
 !data/market/*.csv
+# Yahoo Finance prices are downloaded locally (tools/fetch_prices.py), never shipped.
+data/market/prices.*

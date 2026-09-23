@@ -1,0 +1,16 @@
+EconECPE annotations and derived data
+Copyright (c) 2026 Simone Adobati, Federico Lorenzo Bruno, and Erik Cambria
+
+Everything under data/ (comment manifests, offset-encoded labels, and the
+aggregate market panels) is licensed under the Creative Commons
+Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0):
+https://creativecommons.org/licenses/by-nc/4.0/legalcode
+
+All other files in this repository (code, specification, prompts, tools) are
+licensed under the MIT License; see LICENSE.
+
+The Reddit posts and comments that the labels annotate are not covered by
+either license and are not redistributed here. They remain subject to Reddit's
+terms; tools/rehydrate.py fetches them from the public Arctic Shift archive.
+The labels are model-generated (see the paper, Section VIII) and are not
+investment advice.

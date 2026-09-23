@@ -1,5 +1,12 @@
 # EconECPE — Span-Level Emotion-Cause Pair Extraction for Financial Social Media
 
+Data and code release for **"EconECPE: A Span-Level Emotion-Cause Dataset for
+Financial Social Media"** (Simone Adobati, Federico Lorenzo Bruno, Erik Cambria),
+IEEE ICDM 2026 Workshops (SENTIRE). Archived release: DOI
+[10.5281/zenodo.22913761](https://doi.org/10.5281/zenodo.22913761). Distilled models:
+[huggingface.co/EconECPE](https://huggingface.co/EconECPE). Supplementary
+Material: [`docs/EconECPE_supplementary.pdf`](docs/EconECPE_supplementary.pdf).
+
 Annotation spec, pipeline, labels and market-analysis code for a span-level,
 multi-pair, typed emotion-cause dataset built over the complete 2018–2026
 *r/economics* archive, with a cross-domain extension to *r/investing* and
@@ -69,8 +76,12 @@ true`, so the reported numbers can be reproduced on the verified subset with the
 unverified remainder in plain view rather than silently mixed in.
 
 The aggregate market series in `data/market/` are derived, carry no comment text
-and no usernames, and ship as-is — the market results in §6 reproduce without
-rehydrating anything.
+and no usernames, and ship as-is — the market results (paper §VI–VII) reproduce without
+rehydrating anything. The one input not shipped is the daily **price data**:
+Yahoo Finance's terms do not allow redistributing it, so
+`python tools/fetch_prices.py` downloads the same nine series over the paper's
+window and checks their coverage against the paper's snapshot (it needs
+`pip install yfinance pandas pyarrow`).
 
 ## What is released
 
@@ -121,13 +132,21 @@ Provenance is carried in the code, not just here:
 `pipeline/gold_report.py` (`ANNOTATOR_PROVENANCE`) and
 `gold-tool/server/data.js` name the model behind each slot, and every generated
 report prints it.
-| `data/market/*.csv` | weekly emotion×cause panels, price series, significance tables |
+| `data/market/*.csv` | weekly emotion×cause panels and significance tables (no prices: see below) |
 | `spec/` | the frozen annotation spec and JSON schema |
 | `prompts/` | system prompt, few-shot pool, judge prompt |
 
-Corpus-scale label runs (millions of comments) and the distilled model weights
-are too large for a repository and are not included; `pipeline/label_corpus.py`
-and `pipeline/finetune.py` regenerate both.
+Corpus-scale label runs (millions of comments) are too large for a repository
+and are not included; `pipeline/label_corpus.py` regenerates them. The distilled
+models are on Hugging Face:
+
+| | |
+|---|---|
+| [`EconECPE/econecpe-qwen3.5-9b-lora`](https://huggingface.co/EconECPE/econecpe-qwen3.5-9b-lora) | the deployed generative student (LoRA adapter for Qwen3.5-9B) |
+| [`EconECPE/econecpe-deberta-v3-tagger`](https://huggingface.co/EconECPE/econecpe-deberta-v3-tagger) | the DeBERTaV3 encoder tagger (efficiency variant) |
+
+`pipeline/finetune.py` and `pipeline/deberta_train.py` retrain both from the
+silver labels.
 
 ## Layout
 
@@ -154,7 +173,7 @@ gold-tool/        the browser annotation tool used for the human gold pass
 tools/            corpus rehydration and the span offset codec
 data/manifest/    comment ids + checksums for each annotated split
 data/labels/      offset-encoded labels
-data/market/      aggregate weekly panels and price series
+data/market/      aggregate weekly panels (prices: tools/fetch_prices.py)
 arctic_shift.py   full-history archive ingester (resumable)
 ```
 
@@ -229,10 +248,11 @@ python -m pipeline.deberta_train            # encoder tagger variant
 python -m pipeline.label_corpus --resume    # corpus-scale pass
 ```
 
-**5 — market study.** The panels in `data/market/` are the inputs; the analysis
-runs on CPU in a few minutes:
+**5 — market study.** The panels in `data/market/` plus the downloaded prices are
+the inputs; the analysis runs on CPU in a few minutes:
 
 ```bash
+python tools/fetch_prices.py          # Yahoo Finance prices, not redistributed
 python -m pipeline.market_panel
 python -m pipeline.market_signif      # Granger + walk-forward, BH-corrected
 python -m pipeline.market_regime      # regime splits
@@ -254,5 +274,24 @@ cd gold-tool/client && npm install && npm run dev       # client on :5173
 
 ## Licence
 
-Code and labels: MIT ([`LICENSE`](LICENSE)). The Reddit comments they annotate
-are not covered by it and are not redistributed here.
+- **Code** (everything outside `data/`): MIT, see [`LICENSE`](LICENSE).
+- **Annotations and derived data** (`data/`): CC BY-NC 4.0, see
+  [`LICENSE-DATA`](LICENSE-DATA).
+- **Models** on Hugging Face: their base models' licenses (Apache 2.0 for the
+  Qwen3.5-9B adapter, MIT for the DeBERTaV3 tagger).
+
+The Reddit comments the labels annotate are not covered by any of these and are
+not redistributed here. The labels are model-generated and are not investment
+advice.
+
+## Citation
+
+```bibtex
+@inproceedings{adobati2026econecpe,
+  title     = {{EconECPE}: A Span-Level Emotion-Cause Dataset for Financial Social Media},
+  author    = {Adobati, Simone and Bruno, Federico Lorenzo and Cambria, Erik},
+  booktitle = {2026 IEEE International Conference on Data Mining Workshops (ICDMW)},
+  note      = {SENTIRE 2026 workshop},
+  year      = {2026}
+}
+```
